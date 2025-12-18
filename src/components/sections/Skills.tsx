@@ -472,14 +472,15 @@ function TiltCard({
 }
 
 // Floating 3D Orbit Animation
-function FloatingOrbit() {
+function FloatingOrbit({ isMobile }: { isMobile: boolean }) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  if (!mounted) return null;
+  // Don't render on mobile or until mounted
+  if (!mounted || isMobile) return null;
 
   const orbitItems = [
     { icon: "⚛️", delay: 0, duration: 20 },
@@ -544,7 +545,10 @@ function FloatingOrbit() {
 }
 
 // 3D Sphere Background
-function SphereBackground() {
+function SphereBackground({ isMobile }: { isMobile: boolean }) {
+  // Don't render on mobile
+  if (isMobile) return null;
+
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-30">
       <svg
@@ -629,6 +633,15 @@ export function Skills() {
   const [selectedDomain, setSelectedDomain] = useState<typeof staticSkillDomains[0] | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [skillDomains, setSkillDomains] = useState(staticSkillDomains);
+  const [isMobile, setIsMobile] = useState(true); // Default true to prevent flash on mobile
+
+  // Check if mobile
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Fetch skills from database
   useEffect(() => {
@@ -673,9 +686,9 @@ export function Skills() {
 
   return (
     <section id="skills" className="py-20 md:py-32 relative overflow-hidden min-h-screen">
-      {/* 3D Background Elements */}
-      <SphereBackground />
-      <FloatingOrbit />
+      {/* 3D Background Elements - disabled on mobile */}
+      <SphereBackground isMobile={isMobile} />
+      <FloatingOrbit isMobile={isMobile} />
 
       {/* Grid pattern overlay */}
       <div

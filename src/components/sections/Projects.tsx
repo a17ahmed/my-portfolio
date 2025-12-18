@@ -147,19 +147,19 @@ function SafeImage({
   alt,
   fill = false,
   className = "",
-  fallback
+  fallback = null
 }: {
   src: string;
   alt: string;
   fill?: boolean;
   className?: string;
-  fallback: React.ReactNode;
+  fallback?: React.ReactNode;
 }) {
   const [hasError, setHasError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   if (hasError || !src) {
-    return <>{fallback}</>;
+    return fallback ? <>{fallback}</> : null;
   }
 
   return (
@@ -180,6 +180,176 @@ function SafeImage({
   );
 }
 
+// Lightbox Component for fullscreen image viewing
+function Lightbox({
+  images,
+  currentIndex,
+  isOpen,
+  onClose,
+  onNext,
+  onPrev,
+  onGoTo,
+  gradientFrom,
+  gradientTo
+}: {
+  images: Screenshot[];
+  currentIndex: number;
+  isOpen: boolean;
+  onClose: () => void;
+  onNext: () => void;
+  onPrev: () => void;
+  onGoTo: (index: number) => void;
+  gradientFrom: string;
+  gradientTo: string;
+}) {
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!isOpen) return;
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowRight") onNext();
+      if (e.key === "ArrowLeft") onPrev();
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose, onNext, onPrev]);
+
+  if (!isOpen || images.length === 0) return null;
+
+  const currentImage = images[currentIndex];
+  const isMobile = currentImage?.type === "mobile";
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-xl flex items-center justify-center"
+      onClick={onClose}
+    >
+      {/* Close button */}
+      <motion.button
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        whileHover={{ scale: 1.1, rotate: 90 }}
+        whileTap={{ scale: 0.9 }}
+        onClick={onClose}
+        className="absolute top-4 right-4 z-10 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+      >
+        <X className="w-6 h-6 text-white" />
+      </motion.button>
+
+      {/* Image counter */}
+      <div className="absolute top-4 left-4 z-10 px-4 py-2 rounded-full bg-white/10 text-white text-sm">
+        {currentIndex + 1} / {images.length}
+      </div>
+
+      {/* Previous button */}
+      {images.length > 1 && (
+        <motion.button
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          whileHover={{ scale: 1.1, x: -5 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={(e) => {
+            e.stopPropagation();
+            onPrev();
+          }}
+          className="absolute left-4 z-10 w-14 h-14 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+        >
+          <ChevronLeft className="w-8 h-8 text-white" />
+        </motion.button>
+      )}
+
+      {/* Next button */}
+      {images.length > 1 && (
+        <motion.button
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          whileHover={{ scale: 1.1, x: 5 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={(e) => {
+            e.stopPropagation();
+            onNext();
+          }}
+          className="absolute right-4 z-10 w-14 h-14 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+        >
+          <ChevronRight className="w-8 h-8 text-white" />
+        </motion.button>
+      )}
+
+      {/* Main image container */}
+      <div
+        className="relative max-w-[90vw] max-h-[85vh] flex items-center justify-center"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentIndex}
+            initial={{ opacity: 0, scale: 0.9, x: 100 }}
+            animate={{ opacity: 1, scale: 1, x: 0 }}
+            exit={{ opacity: 0, scale: 0.9, x: -100 }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            className={`relative ${isMobile ? "h-[80vh] w-auto aspect-[9/19]" : "w-[85vw] md:w-[75vw] aspect-video"} rounded-2xl overflow-hidden`}
+          >
+            {/* Glow effect */}
+            <div className={`absolute -inset-4 bg-gradient-to-r ${gradientFrom} ${gradientTo} rounded-3xl blur-3xl opacity-30`} />
+
+            <div className="relative w-full h-full rounded-2xl overflow-hidden border border-white/20 bg-black/50">
+              <Image
+                src={currentImage.src}
+                alt={currentImage.alt}
+                fill
+                className="object-contain"
+                sizes="90vw"
+                priority
+              />
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {/* Image caption */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="absolute bottom-6 left-1/2 -translate-x-1/2 px-6 py-3 rounded-full bg-white/10 backdrop-blur-sm text-white text-sm"
+      >
+        {currentImage.alt}
+      </motion.div>
+
+      {/* Thumbnail strip */}
+      {images.length > 1 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="absolute bottom-20 left-1/2 -translate-x-1/2 flex gap-2 p-2 rounded-xl bg-black/50 backdrop-blur-sm"
+        >
+          {images.map((img, idx) => (
+            <button
+              key={idx}
+              onClick={(e) => {
+                e.stopPropagation();
+                onGoTo(idx);
+              }}
+              className={`relative ${img.type === "mobile" ? "w-8 h-14" : "w-16 h-10"} rounded-lg overflow-hidden transition-all ${
+                idx === currentIndex ? "ring-2 ring-white scale-110" : "opacity-50 hover:opacity-100"
+              }`}
+            >
+              <Image
+                src={img.src}
+                alt={img.alt}
+                fill
+                className="object-cover"
+              />
+            </button>
+          ))}
+        </motion.div>
+      )}
+    </motion.div>
+  );
+}
+
 // Project Detail Modal
 function ProjectModal({
   project,
@@ -193,12 +363,15 @@ function ProjectModal({
   const [iframeLoaded, setIframeLoaded] = useState(false);
   const [iframeError, setIframeError] = useState(false);
   const [selectedScreenshot, setSelectedScreenshot] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
 
   useEffect(() => {
     if (isOpen) {
       setIframeLoaded(false);
       setIframeError(false);
       setSelectedScreenshot(0);
+      setLightboxOpen(false);
     }
   }, [isOpen, project]);
 
@@ -206,6 +379,38 @@ function ProjectModal({
 
   const desktopScreenshots = project.screenshots.filter(s => s.type === "desktop");
   const mobileScreenshots = project.screenshots.filter(s => s.type === "mobile");
+  const allScreenshots = project.screenshots;
+
+  const openLightbox = (index: number) => {
+    setLightboxIndex(index);
+    setLightboxOpen(true);
+  };
+
+  const closeLightbox = () => {
+    setLightboxOpen(false);
+  };
+
+  const nextImage = () => {
+    setLightboxIndex((prev) => (prev + 1) % allScreenshots.length);
+  };
+
+  const prevImage = () => {
+    setLightboxIndex((prev) => (prev - 1 + allScreenshots.length) % allScreenshots.length);
+  };
+
+  const goToImage = (index: number) => {
+    setLightboxIndex(index);
+  };
+
+  // Get index in allScreenshots array for a desktop screenshot
+  const getDesktopIndex = (localIndex: number) => {
+    return localIndex;
+  };
+
+  // Get index in allScreenshots array for a mobile screenshot
+  const getMobileIndex = (localIndex: number) => {
+    return desktopScreenshots.length + localIndex;
+  };
 
   return (
     <AnimatePresence>
@@ -393,6 +598,7 @@ function ProjectModal({
                             <motion.div
                               key={index}
                               whileHover={{ scale: 1.02 }}
+                              onClick={() => openLightbox(getDesktopIndex(index))}
                               className="relative aspect-video rounded-xl overflow-hidden bg-black/30 border border-white/10 cursor-pointer group"
                             >
                               <SafeImage
@@ -425,6 +631,7 @@ function ProjectModal({
                             <motion.div
                               key={index}
                               whileHover={{ scale: 1.02, y: -5 }}
+                              onClick={() => openLightbox(getMobileIndex(index))}
                               className="relative flex-shrink-0 w-32 aspect-[9/19] rounded-2xl overflow-hidden bg-black/30 border border-white/10 cursor-pointer group"
                             >
                               <SafeImage
@@ -480,6 +687,23 @@ function ProjectModal({
               </div>
             </div>
           </motion.div>
+
+          {/* Lightbox for fullscreen image viewing */}
+          <AnimatePresence>
+            {lightboxOpen && (
+              <Lightbox
+                images={allScreenshots}
+                currentIndex={lightboxIndex}
+                isOpen={lightboxOpen}
+                onClose={closeLightbox}
+                onNext={nextImage}
+                onPrev={prevImage}
+                onGoTo={goToImage}
+                gradientFrom={project.gradientFrom}
+                gradientTo={project.gradientTo}
+              />
+            )}
+          </AnimatePresence>
         </>
       )}
     </AnimatePresence>
@@ -517,7 +741,7 @@ function ProjectCard({
       >
         {/* Thumbnail */}
         <div className="relative aspect-video overflow-hidden">
-          {/* Gradient background */}
+          {/* Gradient background as fallback */}
           <div className={`absolute inset-0 bg-gradient-to-br ${project.gradientFrom}/30 ${project.gradientTo}/30`}>
             <div className="absolute inset-0 flex items-center justify-center">
               {project.category === "mobile" ? (
@@ -527,13 +751,16 @@ function ProjectCard({
               )}
             </div>
           </div>
-          {/* Uncomment when you have actual images */}
-          {/* <Image
-            src={project.thumbnail}
-            alt={project.title}
-            fill
-            className="object-cover transition-transform duration-500 group-hover:scale-110"
-          /> */}
+          {/* Thumbnail image */}
+          {project.thumbnail && (
+            <SafeImage
+              src={project.thumbnail}
+              alt={project.title}
+              fill
+              className="object-cover transition-transform duration-500 group-hover:scale-110"
+              fallback={null}
+            />
+          )}
 
           {/* Hover overlay */}
           <AnimatePresence>

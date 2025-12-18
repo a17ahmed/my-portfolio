@@ -10,6 +10,8 @@ import {
   Loader2,
   ExternalLink,
   Github,
+  Monitor,
+  Smartphone,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
@@ -63,6 +65,8 @@ export default function ProjectsAdmin() {
   const [formData, setFormData] = useState<Omit<Project, "_id">>(emptyProject);
   const [saving, setSaving] = useState(false);
   const [tagsInput, setTagsInput] = useState("");
+  const [uploadingDesktop, setUploadingDesktop] = useState(false);
+  const [uploadingMobile, setUploadingMobile] = useState(false);
 
   useEffect(() => {
     fetchProjects();
@@ -184,6 +188,90 @@ export default function ProjectsAdmin() {
     } catch (error) {
       console.error("Upload error:", error);
       toast.error("Failed to upload image");
+    }
+  }
+
+  async function handleScreenshotUpload(
+    e: React.ChangeEvent<HTMLInputElement>,
+    type: "desktop" | "mobile"
+  ) {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    const setUploading = type === "desktop" ? setUploadingDesktop : setUploadingMobile;
+    setUploading(true);
+
+    const folder = type === "desktop"
+      ? "portfolio/projects/desktop"
+      : "portfolio/projects/mobile";
+
+    try {
+      const uploadPromises = Array.from(files).map(async (file) => {
+        const formDataUpload = new FormData();
+        formDataUpload.append("file", file);
+        formDataUpload.append("folder", folder);
+
+        const res = await fetch("/api/upload", {
+          method: "POST",
+          body: formDataUpload,
+        });
+
+        if (!res.ok) throw new Error("Upload failed");
+
+        const { url } = await res.json();
+        return {
+          src: url,
+          alt: file.name.replace(/\.[^/.]+$/, ""),
+        };
+      });
+
+      const uploadedScreenshots = await Promise.all(uploadPromises);
+
+      if (type === "desktop") {
+        setFormData({
+          ...formData,
+          desktopScreenshots: [...formData.desktopScreenshots, ...uploadedScreenshots],
+        });
+      } else {
+        setFormData({
+          ...formData,
+          mobileScreenshots: [...formData.mobileScreenshots, ...uploadedScreenshots],
+        });
+      }
+
+      toast.success(`${uploadedScreenshots.length} ${type} screenshot(s) uploaded!`);
+    } catch (error) {
+      console.error("Upload error:", error);
+      toast.error(`Failed to upload ${type} screenshots`);
+    } finally {
+      setUploading(false);
+      e.target.value = "";
+    }
+  }
+
+  function removeScreenshot(type: "desktop" | "mobile", index: number) {
+    if (type === "desktop") {
+      setFormData({
+        ...formData,
+        desktopScreenshots: formData.desktopScreenshots.filter((_, i) => i !== index),
+      });
+    } else {
+      setFormData({
+        ...formData,
+        mobileScreenshots: formData.mobileScreenshots.filter((_, i) => i !== index),
+      });
+    }
+  }
+
+  function updateScreenshotAlt(type: "desktop" | "mobile", index: number, alt: string) {
+    if (type === "desktop") {
+      const updated = [...formData.desktopScreenshots];
+      updated[index] = { ...updated[index], alt };
+      setFormData({ ...formData, desktopScreenshots: updated });
+    } else {
+      const updated = [...formData.mobileScreenshots];
+      updated[index] = { ...updated[index], alt };
+      setFormData({ ...formData, mobileScreenshots: updated });
     }
   }
 
@@ -470,6 +558,138 @@ export default function ProjectsAdmin() {
                     />
                     <span className="text-gray-300">Featured project</span>
                   </label>
+                </div>
+
+                {/* Desktop Screenshots */}
+                <div className="border border-white/10 rounded-xl p-4">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="p-2 bg-blue-500/20 rounded-lg">
+                      <Monitor className="w-5 h-5 text-blue-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-white font-medium">Desktop Screenshots</h3>
+                      <p className="text-gray-500 text-xs">Landscape images, recommended 1920x1080</p>
+                    </div>
+                  </div>
+
+                  <label className="flex items-center justify-center gap-2 px-4 py-3 bg-blue-500/10 border border-blue-500/30 border-dashed rounded-lg cursor-pointer hover:bg-blue-500/20 transition-colors">
+                    {uploadingDesktop ? (
+                      <Loader2 className="w-5 h-5 text-blue-400 animate-spin" />
+                    ) : (
+                      <Plus className="w-5 h-5 text-blue-400" />
+                    )}
+                    <span className="text-blue-400 text-sm">
+                      {uploadingDesktop ? "Uploading..." : "Add Desktop Screenshots"}
+                    </span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={(e) => handleScreenshotUpload(e, "desktop")}
+                      className="hidden"
+                      disabled={uploadingDesktop}
+                    />
+                  </label>
+
+                  {formData.desktopScreenshots.length > 0 && (
+                    <div className="mt-4 space-y-3">
+                      {formData.desktopScreenshots.map((screenshot, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center gap-3 p-2 bg-white/5 rounded-lg"
+                        >
+                          <div className="relative w-24 h-14 rounded overflow-hidden flex-shrink-0">
+                            <Image
+                              src={screenshot.src}
+                              alt={screenshot.alt}
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                          <input
+                            type="text"
+                            value={screenshot.alt}
+                            onChange={(e) => updateScreenshotAlt("desktop", index, e.target.value)}
+                            placeholder="Alt text"
+                            className="flex-1 px-3 py-2 bg-white/5 border border-white/10 rounded text-white text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => removeScreenshot("desktop", index)}
+                            className="p-2 rounded-lg bg-red-500/20 hover:bg-red-500/30 transition-colors"
+                          >
+                            <Trash2 className="w-4 h-4 text-red-400" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Mobile Screenshots */}
+                <div className="border border-white/10 rounded-xl p-4">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="p-2 bg-green-500/20 rounded-lg">
+                      <Smartphone className="w-5 h-5 text-green-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-white font-medium">Mobile Screenshots</h3>
+                      <p className="text-gray-500 text-xs">Portrait images, recommended 390x844</p>
+                    </div>
+                  </div>
+
+                  <label className="flex items-center justify-center gap-2 px-4 py-3 bg-green-500/10 border border-green-500/30 border-dashed rounded-lg cursor-pointer hover:bg-green-500/20 transition-colors">
+                    {uploadingMobile ? (
+                      <Loader2 className="w-5 h-5 text-green-400 animate-spin" />
+                    ) : (
+                      <Plus className="w-5 h-5 text-green-400" />
+                    )}
+                    <span className="text-green-400 text-sm">
+                      {uploadingMobile ? "Uploading..." : "Add Mobile Screenshots"}
+                    </span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={(e) => handleScreenshotUpload(e, "mobile")}
+                      className="hidden"
+                      disabled={uploadingMobile}
+                    />
+                  </label>
+
+                  {formData.mobileScreenshots.length > 0 && (
+                    <div className="mt-4 space-y-3">
+                      {formData.mobileScreenshots.map((screenshot, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center gap-3 p-2 bg-white/5 rounded-lg"
+                        >
+                          <div className="relative w-10 h-16 rounded overflow-hidden flex-shrink-0">
+                            <Image
+                              src={screenshot.src}
+                              alt={screenshot.alt}
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                          <input
+                            type="text"
+                            value={screenshot.alt}
+                            onChange={(e) => updateScreenshotAlt("mobile", index, e.target.value)}
+                            placeholder="Alt text"
+                            className="flex-1 px-3 py-2 bg-white/5 border border-white/10 rounded text-white text-sm focus:outline-none focus:ring-1 focus:ring-green-500"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => removeScreenshot("mobile", index)}
+                            className="p-2 rounded-lg bg-red-500/20 hover:bg-red-500/30 transition-colors"
+                          >
+                            <Trash2 className="w-4 h-4 text-red-400" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex gap-4 pt-4">
