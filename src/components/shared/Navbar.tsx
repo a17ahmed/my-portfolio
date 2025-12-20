@@ -20,6 +20,22 @@ const navLinks = [
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [resumeUrl, setResumeUrl] = useState<string>("");
+
+  useEffect(() => {
+    async function fetchHeroData() {
+      try {
+        const res = await fetch("/api/hero");
+        const data = await res.json();
+        if (data?.resumeUrl) {
+          setResumeUrl(data.resumeUrl);
+        }
+      } catch (error) {
+        console.error("Error fetching hero data:", error);
+      }
+    }
+    fetchHeroData();
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -72,14 +88,19 @@ export function Navbar() {
           {/* Actions */}
           <div className="flex items-center gap-3">
             <ThemeToggle />
-            <Button
-              variant="outline"
-              size="sm"
-              className="hidden sm:flex items-center gap-2 glass glass-hover"
-            >
-              <Download className="h-4 w-4" />
-              Resume
-            </Button>
+            {resumeUrl && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="hidden sm:flex items-center gap-2 glass glass-hover"
+                asChild
+              >
+                <a href={resumeUrl} target="_blank" rel="noopener noreferrer">
+                  <Download className="h-4 w-4" />
+                  Resume
+                </a>
+              </Button>
+            )}
 
             {/* Mobile menu button */}
             <Button
@@ -124,21 +145,26 @@ export function Navbar() {
                     </Link>
                   </motion.div>
                 ))}
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: navLinks.length * 0.05 }}
-                  className="pt-2"
-                >
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full flex items-center justify-center gap-2 glass glass-hover"
+                {resumeUrl && (
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: navLinks.length * 0.05 }}
+                    className="pt-2"
                   >
-                    <Download className="h-4 w-4" />
-                    Download Resume
-                  </Button>
-                </motion.div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full flex items-center justify-center gap-2 glass glass-hover"
+                      asChild
+                    >
+                      <a href={resumeUrl} target="_blank" rel="noopener noreferrer">
+                        <Download className="h-4 w-4" />
+                        Download Resume
+                      </a>
+                    </Button>
+                  </motion.div>
+                )}
               </div>
             </motion.div>
           )}

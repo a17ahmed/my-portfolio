@@ -1,7 +1,7 @@
 "use client";
 
-import { motion, useInView, useAnimation } from "framer-motion";
-import { ReactNode, useRef, useEffect } from "react";
+import { motion, useInView } from "framer-motion";
+import { ReactNode, useRef } from "react";
 
 interface FadeInProps {
   children: ReactNode;
@@ -12,33 +12,24 @@ interface FadeInProps {
   once?: boolean;
 }
 
+const directions = {
+  up: { y: 40 },
+  down: { y: -40 },
+  left: { x: 40 },
+  right: { x: -40 },
+  none: {},
+};
+
 export function FadeIn({
   children,
   delay = 0,
   duration = 0.6,
   direction = "up",
   className = "",
-  once = false,
+  once = true,
 }: FadeInProps) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { margin: "-100px", once });
-  const controls = useAnimation();
-
-  const directions = {
-    up: { y: 60 },
-    down: { y: -60 },
-    left: { x: 60 },
-    right: { x: -60 },
-    none: {},
-  };
-
-  useEffect(() => {
-    if (isInView) {
-      controls.start({ opacity: 1, x: 0, y: 0 });
-    } else if (!once) {
-      controls.start({ opacity: 0, ...directions[direction] });
-    }
-  }, [isInView, controls, direction, once]);
+  const isInView = useInView(ref, { once, margin: "-50px" });
 
   return (
     <motion.div
@@ -47,7 +38,11 @@ export function FadeIn({
         opacity: 0,
         ...directions[direction],
       }}
-      animate={controls}
+      animate={
+        isInView
+          ? { opacity: 1, x: 0, y: 0 }
+          : { opacity: 0, ...directions[direction] }
+      }
       transition={{
         duration,
         delay,

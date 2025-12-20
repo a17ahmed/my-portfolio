@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Loader2, Save, Plus, X, Upload } from "lucide-react";
+import { Loader2, Save, Plus, X, Upload, FileText, Github } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { toast } from "sonner";
@@ -21,6 +21,8 @@ interface HeroData {
   description: string;
   backgroundImage: string;
   socialLinks: SocialLink[];
+  resumeUrl: string;
+  githubUsername: string;
 }
 
 const defaultHero: HeroData = {
@@ -40,6 +42,8 @@ const defaultHero: HeroData = {
     { name: "LinkedIn", href: "https://linkedin.com", icon: "Linkedin" },
     { name: "Twitter", href: "https://twitter.com", icon: "Twitter" },
   ],
+  resumeUrl: "",
+  githubUsername: "",
 };
 
 export default function HeroAdmin() {
@@ -110,6 +114,31 @@ export default function HeroAdmin() {
     } catch (error) {
       console.error("Upload error:", error);
       toast.error("Failed to upload image");
+    }
+  }
+
+  async function handleResumeUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const formDataUpload = new FormData();
+    formDataUpload.append("file", file);
+    formDataUpload.append("folder", "portfolio/resume");
+
+    try {
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formDataUpload,
+      });
+
+      if (!res.ok) throw new Error("Upload failed");
+
+      const { url } = await res.json();
+      setFormData({ ...formData, resumeUrl: url });
+      toast.success("Resume uploaded!");
+    } catch (error) {
+      console.error("Upload error:", error);
+      toast.error("Failed to upload resume");
     }
   }
 
@@ -361,6 +390,71 @@ export default function HeroAdmin() {
                 </button>
               </div>
             ))}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              <div className="flex items-center gap-2">
+                <Github className="w-4 h-4" />
+                GitHub Username
+              </div>
+            </label>
+            <input
+              type="text"
+              value={formData.githubUsername}
+              onChange={(e) =>
+                setFormData({ ...formData, githubUsername: e.target.value })
+              }
+              placeholder="e.g., a17ahmed"
+              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Used to fetch GitHub stats and repositories
+            </p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              <div className="flex items-center gap-2">
+                <FileText className="w-4 h-4" />
+                Resume
+              </div>
+            </label>
+            <div className="flex gap-2">
+              <label className="flex-1 cursor-pointer">
+                <div className="flex items-center justify-center gap-2 px-4 py-3 bg-white/5 border border-white/10 border-dashed rounded-lg text-gray-400 hover:bg-white/10 transition-colors">
+                  <Upload className="w-5 h-5" />
+                  <span>{formData.resumeUrl ? "Change Resume" : "Upload Resume"}</span>
+                </div>
+                <input
+                  type="file"
+                  accept=".pdf,.doc,.docx"
+                  onChange={handleResumeUpload}
+                  className="hidden"
+                />
+              </label>
+            </div>
+            {formData.resumeUrl && (
+              <div className="mt-2 flex items-center gap-2 text-sm">
+                <FileText className="w-4 h-4 text-cyan-400" />
+                <a
+                  href={formData.resumeUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-cyan-400 hover:underline truncate"
+                >
+                  View uploaded resume
+                </a>
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, resumeUrl: "" })}
+                  className="p-1 rounded hover:bg-red-500/20 transition-colors"
+                >
+                  <X className="w-4 h-4 text-red-400" />
+                </button>
+              </div>
+            )}
           </div>
         </div>
 

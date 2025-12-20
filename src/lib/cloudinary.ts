@@ -25,6 +25,25 @@ export async function uploadImage(
   }
 }
 
+export async function uploadFile(
+  file: string,
+  folder: string = "portfolio"
+): Promise<{ url: string; publicId: string }> {
+  try {
+    const result = await cloudinary.uploader.upload(file, {
+      folder: folder,
+      resource_type: "raw",
+    });
+    return {
+      url: result.secure_url,
+      publicId: result.public_id,
+    };
+  } catch (error) {
+    console.error("Cloudinary upload error:", error);
+    throw new Error("Failed to upload file");
+  }
+}
+
 export async function deleteImage(publicId: string): Promise<boolean> {
   try {
     await cloudinary.uploader.destroy(publicId);

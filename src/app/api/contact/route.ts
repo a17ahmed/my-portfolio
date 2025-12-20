@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
 import { ContactInfo, ContactMessage } from "@/models/Contact";
+import { sendEmail, generateContactEmailHtml } from "@/lib/email";
 
 // GET contact info
 export async function GET() {
@@ -27,8 +28,30 @@ export async function POST(req: NextRequest) {
 
     // If it's a contact form submission (has name, email, subject, message)
     if (body.name && body.email && body.subject && body.message) {
+      // Save to database
       const contactMessage = new ContactMessage(body);
       await contactMessage.save();
+
+      // Send email notification
+      const recipientEmail = process.env.CONTACT_EMAIL || "a17irfan@gmail.com";
+
+      try {
+        await sendEmail({
+          to: recipientEmail,
+          subject: `Portfolio Message: ${body.subject}`,
+          html: generateContactEmailHtml({
+            name: body.name,
+            email: body.email,
+            subject: body.subject,
+            message: body.message,
+          }),
+          replyTo: body.email,
+        });
+      } catch (emailError) {
+        console.error("Failed to send email notification:", emailError);
+        // Don't fail the request if email fails - message is still saved
+      }
+
       return NextResponse.json(
         { message: "Message sent successfully", id: contactMessage._id },
         { status: 201 }

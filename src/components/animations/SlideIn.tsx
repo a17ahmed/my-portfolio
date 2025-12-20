@@ -1,7 +1,7 @@
 "use client";
 
-import { motion, useInView, useAnimation } from "framer-motion";
-import { ReactNode, useRef, useEffect } from "react";
+import { motion, useInView } from "framer-motion";
+import { ReactNode, useRef } from "react";
 
 interface SlideInProps {
   children: ReactNode;
@@ -18,27 +18,18 @@ export function SlideIn({
   duration = 0.6,
   direction = "left",
   className = "",
-  once = false,
+  once = true,
 }: SlideInProps) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { margin: "-100px", once });
-  const controls = useAnimation();
+  const isInView = useInView(ref, { once, margin: "-50px" });
 
-  const initialX = direction === "left" ? -100 : 100;
-
-  useEffect(() => {
-    if (isInView) {
-      controls.start({ opacity: 1, x: 0 });
-    } else if (!once) {
-      controls.start({ opacity: 0, x: initialX });
-    }
-  }, [isInView, controls, initialX, once]);
+  const initialX = direction === "left" ? -60 : 60;
 
   return (
     <motion.div
       ref={ref}
       initial={{ opacity: 0, x: initialX }}
-      animate={controls}
+      animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: initialX }}
       transition={{
         duration,
         delay,

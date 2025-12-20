@@ -183,12 +183,18 @@ export default function AboutAdmin() {
             animate={{ opacity: 1, y: 0 }}
             className="glass-card rounded-2xl border border-white/10 overflow-hidden"
           >
-            <button
-              type="button"
+            <div
+              role="button"
+              tabIndex={0}
               onClick={() =>
                 setExpandedSlide(expandedSlide === index ? null : index)
               }
-              className="w-full p-4 flex items-center justify-between hover:bg-white/5 transition-colors"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  setExpandedSlide(expandedSlide === index ? null : index);
+                }
+              }}
+              className="w-full p-4 flex items-center justify-between hover:bg-white/5 transition-colors cursor-pointer"
             >
               <div className="flex items-center gap-4">
                 {slide.src && (
@@ -225,7 +231,7 @@ export default function AboutAdmin() {
                   <ChevronDown className="w-5 h-5 text-gray-400" />
                 )}
               </div>
-            </button>
+            </div>
 
             {expandedSlide === index && (
               <div className="p-6 pt-2 space-y-4 border-t border-white/10">

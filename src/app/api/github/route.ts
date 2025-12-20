@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
+import dbConnect from "@/lib/db";
+import Hero from "@/models/Hero";
 
-const GITHUB_USERNAME = "a17ahmed";
+const DEFAULT_GITHUB_USERNAME = "a17ahmed";
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 
 interface GitHubRepo {
@@ -41,6 +43,11 @@ const languageColors: Record<string, string> = {
 
 export async function GET() {
   try {
+    // Get GitHub username from database
+    await dbConnect();
+    const hero = await Hero.findOne({});
+    const GITHUB_USERNAME = hero?.githubUsername || DEFAULT_GITHUB_USERNAME;
+
     const headers: HeadersInit = {
       Accept: "application/vnd.github.v3+json",
     };
@@ -48,6 +55,7 @@ export async function GET() {
     // Check if token exists
     const hasToken = !!GITHUB_TOKEN;
     console.log("GitHub API: Token available:", hasToken);
+    console.log("GitHub API: Using username:", GITHUB_USERNAME);
 
     if (GITHUB_TOKEN) {
       headers.Authorization = `Bearer ${GITHUB_TOKEN}`;

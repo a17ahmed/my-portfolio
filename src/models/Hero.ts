@@ -14,6 +14,8 @@ export interface IHero extends Document {
   description: string;
   backgroundImage: string;
   socialLinks: ISocialLink[];
+  resumeUrl: string;
+  githubUsername: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -33,6 +35,8 @@ const HeroSchema = new Schema<IHero>(
     description: { type: String, required: true },
     backgroundImage: { type: String, required: true },
     socialLinks: [SocialLinkSchema],
+    resumeUrl: { type: String, default: "" },
+    githubUsername: { type: String, default: "" },
   },
   { timestamps: true }
 );

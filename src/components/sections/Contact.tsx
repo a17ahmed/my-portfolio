@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   Mail,
@@ -56,6 +56,7 @@ const subjects = [
 
 export function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [resumeUrl, setResumeUrl] = useState<string>("");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -63,16 +64,44 @@ export function Contact() {
     message: "",
   });
 
+  useEffect(() => {
+    async function fetchHeroData() {
+      try {
+        const res = await fetch("/api/hero");
+        const data = await res.json();
+        if (data?.resumeUrl) {
+          setResumeUrl(data.resumeUrl);
+        }
+      } catch (error) {
+        console.error("Error fetching hero data:", error);
+      }
+    }
+    fetchHeroData();
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
 
-    toast.success("Message sent successfully! I'll get back to you soon.");
-    setFormData({ name: "", email: "", subject: "", message: "" });
-    setIsSubmitting(false);
+      if (!res.ok) {
+        throw new Error("Failed to send message");
+      }
+
+      toast.success("Message sent successfully! I'll get back to you soon.");
+      setFormData({ name: "", email: "", subject: "", message: "" });
+    } catch (error) {
+      console.error("Error sending message:", error);
+      toast.error("Failed to send message. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (
@@ -168,16 +197,18 @@ export function Contact() {
                   ))}
                 </div>
 
-                <Button
-                  variant="outline"
-                  className="w-full glass glass-hover"
-                  asChild
-                >
-                  <a href="/resume.pdf" download>
-                    <Download className="h-4 w-4 mr-2" />
-                    Download Resume
-                  </a>
-                </Button>
+{resumeUrl && (
+                  <Button
+                    variant="outline"
+                    className="w-full glass glass-hover"
+                    asChild
+                  >
+                    <a href={resumeUrl} target="_blank" rel="noopener noreferrer">
+                      <Download className="h-4 w-4 mr-2" />
+                      Download Resume
+                    </a>
+                  </Button>
+                )}
               </div>
             </div>
           </FadeIn>
