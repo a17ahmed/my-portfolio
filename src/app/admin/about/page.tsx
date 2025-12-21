@@ -162,14 +162,14 @@ export default function AboutAdmin() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2">About Section</h1>
-          <p className="text-gray-400">
-            Manage your about section slides (scroll-linked)
+          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-1 sm:mb-2">About Section</h1>
+          <p className="text-gray-400 text-sm sm:text-base">
+            Manage your about section slides
           </p>
         </div>
-        <Button onClick={addSlide} className="bg-cyan-500 hover:bg-cyan-600">
+        <Button onClick={addSlide} className="bg-cyan-500 hover:bg-cyan-600 w-full sm:w-auto">
           <Plus className="w-5 h-5 mr-2" />
           Add Slide
         </Button>
@@ -234,8 +234,8 @@ export default function AboutAdmin() {
             </div>
 
             {expandedSlide === index && (
-              <div className="p-6 pt-2 space-y-4 border-t border-white/10">
-                <div className="grid grid-cols-2 gap-4">
+              <div className="p-4 sm:p-6 pt-2 space-y-4 border-t border-white/10">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-300 mb-2">
                       Label
@@ -302,7 +302,7 @@ export default function AboutAdmin() {
                   )}
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-300 mb-2">
                       Title
@@ -360,7 +360,7 @@ export default function AboutAdmin() {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-300 mb-2">
                       CTA Button Text

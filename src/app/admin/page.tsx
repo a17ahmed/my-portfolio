@@ -90,14 +90,14 @@ export default function AdminDashboard() {
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white mb-2">Dashboard</h1>
-        <p className="text-gray-400">
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold text-white mb-1 sm:mb-2">Dashboard</h1>
+        <p className="text-gray-400 text-sm sm:text-base">
           Welcome back! Here&apos;s an overview of your portfolio.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-6 sm:mb-8">
         {statCards.map((stat, index) => (
           <motion.a
             key={stat.label}
@@ -106,19 +106,19 @@ export default function AdminDashboard() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
             whileHover={{ scale: 1.02 }}
-            className="glass-card rounded-2xl p-6 border border-white/10 hover:border-white/20 transition-colors"
+            className="glass-card rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-white/10 hover:border-white/20 transition-colors"
           >
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-3 sm:mb-4">
               <div
-                className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}
+                className={`w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}
               >
-                <stat.icon className="w-6 h-6 text-white" />
+                <stat.icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </div>
-              <TrendingUp className="w-5 h-5 text-green-400" />
+              <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-green-400" />
             </div>
             <div>
-              <p className="text-gray-400 text-sm mb-1">{stat.label}</p>
-              <p className="text-3xl font-bold text-white">
+              <p className="text-gray-400 text-xs sm:text-sm mb-1">{stat.label}</p>
+              <p className="text-2xl sm:text-3xl font-bold text-white">
                 {loading ? "..." : stat.value}
               </p>
             </div>

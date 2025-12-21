@@ -490,9 +490,9 @@ function ProjectModal({
 
               {/* Main Content Area */}
               <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
-                {/* Large Preview Section - Only show if iframe is allowed and working */}
+                {/* Large Preview Section - Only show on desktop if iframe is allowed and working */}
                 {project.allowIframe && !iframeError && project.liveUrl && (
-                  <div className="relative">
+                  <div className="relative hidden md:block">
                     <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-3 flex items-center gap-2">
                       <Monitor className="w-4 h-4" />
                       Live Preview

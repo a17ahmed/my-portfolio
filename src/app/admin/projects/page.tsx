@@ -301,14 +301,14 @@ export default function ProjectsAdmin() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2">Projects</h1>
-          <p className="text-gray-400">Manage your portfolio projects</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-1 sm:mb-2">Projects</h1>
+          <p className="text-gray-400 text-sm sm:text-base">Manage your portfolio projects</p>
         </div>
         <Button
           onClick={() => openModal()}
-          className="bg-cyan-500 hover:bg-cyan-600"
+          className="bg-cyan-500 hover:bg-cyan-600 w-full sm:w-auto"
         >
           <Plus className="w-5 h-5 mr-2" />
           Add Project
@@ -522,7 +522,7 @@ export default function ProjectsAdmin() {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-300 mb-2">
                       Live URL
@@ -533,8 +533,8 @@ export default function ProjectsAdmin() {
                       onChange={(e) =>
                         setFormData({ ...formData, liveUrl: e.target.value })
                       }
-                      placeholder="mobilemate.io or https://mobilemate.io"
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                      placeholder="mobilemate.io"
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 text-sm"
                     />
                   </div>
                   <div>
@@ -547,13 +547,13 @@ export default function ProjectsAdmin() {
                       onChange={(e) =>
                         setFormData({ ...formData, githubUrl: e.target.value })
                       }
-                      placeholder="github.com/username/repo"
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                      placeholder="github.com/user/repo"
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 text-sm"
                     />
                   </div>
                 </div>
 
-                <div className="flex gap-6">
+                <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
                   <label className="flex items-center gap-3 cursor-pointer">
                     <input
                       type="checkbox"
@@ -563,7 +563,7 @@ export default function ProjectsAdmin() {
                       }
                       className="w-5 h-5 rounded bg-white/5 border-white/20 text-cyan-500 focus:ring-cyan-500"
                     />
-                    <span className="text-gray-300">Allow iframe preview</span>
+                    <span className="text-gray-300 text-sm sm:text-base">Allow iframe preview</span>
                   </label>
                   <label className="flex items-center gap-3 cursor-pointer">
                     <input
@@ -574,7 +574,7 @@ export default function ProjectsAdmin() {
                       }
                       className="w-5 h-5 rounded bg-white/5 border-white/20 text-cyan-500 focus:ring-cyan-500"
                     />
-                    <span className="text-gray-300">Featured project</span>
+                    <span className="text-gray-300 text-sm sm:text-base">Featured project</span>
                   </label>
                 </div>
 

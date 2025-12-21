@@ -196,9 +196,9 @@ export default function HeroAdmin() {
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white mb-2">Hero Section</h1>
-        <p className="text-gray-400">
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold text-white mb-1 sm:mb-2">Hero Section</h1>
+        <p className="text-gray-400 text-sm sm:text-base">
           Customize your landing section content
         </p>
       </div>
@@ -207,7 +207,7 @@ export default function HeroAdmin() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         onSubmit={handleSubmit}
-        className="glass-card rounded-2xl p-6 border border-white/10 space-y-6"
+        className="glass-card rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-white/10 space-y-5 sm:space-y-6"
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
@@ -333,7 +333,7 @@ export default function HeroAdmin() {
         </div>
 
         <div>
-          <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center justify-between mb-3">
             <label className="block text-sm font-medium text-gray-300">
               Social Links
             </label>
@@ -349,45 +349,126 @@ export default function HeroAdmin() {
           </div>
           <div className="space-y-3">
             {formData.socialLinks.map((link, index) => (
-              <div key={index} className="flex gap-3 items-start">
-                <input
-                  type="text"
-                  value={link.name}
-                  onChange={(e) =>
-                    updateSocialLink(index, "name", e.target.value)
-                  }
-                  placeholder="Name"
-                  className="w-32 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                />
-                <input
-                  type="url"
-                  value={link.href}
-                  onChange={(e) =>
-                    updateSocialLink(index, "href", e.target.value)
-                  }
-                  placeholder="URL"
-                  className="flex-1 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                />
-                <select
-                  value={link.icon}
-                  onChange={(e) =>
-                    updateSocialLink(index, "icon", e.target.value)
-                  }
-                  className="w-32 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                >
-                  <option value="Github">GitHub</option>
-                  <option value="Linkedin">LinkedIn</option>
-                  <option value="Twitter">Twitter</option>
-                  <option value="Instagram">Instagram</option>
-                  <option value="Youtube">YouTube</option>
-                </select>
-                <button
-                  type="button"
-                  onClick={() => removeSocialLink(index)}
-                  className="p-2 rounded-lg hover:bg-red-500/20 transition-colors"
-                >
-                  <X className="w-4 h-4 text-red-400" />
-                </button>
+              <div key={index} className="p-3 bg-white/5 rounded-lg border border-white/10">
+                {/* Mobile & Tablet: Stacked layout */}
+                <div className="lg:hidden space-y-2">
+                  <input
+                    type="text"
+                    value={link.name}
+                    onChange={(e) =>
+                      updateSocialLink(index, "name", e.target.value)
+                    }
+                    placeholder="Name"
+                    className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                  />
+                  <select
+                    value={link.icon}
+                    onChange={(e) =>
+                      updateSocialLink(index, "icon", e.target.value)
+                    }
+                    className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                  >
+                    <option value="Github">GitHub</option>
+                    <option value="Linkedin">LinkedIn</option>
+                    <option value="Twitter">Twitter / X</option>
+                    <option value="Instagram">Instagram</option>
+                    <option value="Youtube">YouTube</option>
+                    <option value="Facebook">Facebook</option>
+                    <option value="Fiverr">Fiverr</option>
+                    <option value="Upwork">Upwork</option>
+                    <option value="Dribbble">Dribbble</option>
+                    <option value="Behance">Behance</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Discord">Discord</option>
+                    <option value="Twitch">Twitch</option>
+                    <option value="TikTok">TikTok</option>
+                    <option value="Snapchat">Snapchat</option>
+                    <option value="Pinterest">Pinterest</option>
+                    <option value="Reddit">Reddit</option>
+                    <option value="Telegram">Telegram</option>
+                    <option value="WhatsApp">WhatsApp</option>
+                    <option value="Mail">Email</option>
+                    <option value="Globe">Website</option>
+                    <option value="Link">Other</option>
+                  </select>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={link.href}
+                      onChange={(e) =>
+                        updateSocialLink(index, "href", e.target.value)
+                      }
+                      placeholder="URL"
+                      className="flex-1 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeSocialLink(index)}
+                      className="p-2 rounded-lg bg-red-500/20 hover:bg-red-500/30 transition-colors"
+                    >
+                      <X className="w-5 h-5 text-red-400" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Desktop: Horizontal layout */}
+                <div className="hidden lg:flex gap-3 items-center">
+                  <input
+                    type="text"
+                    value={link.name}
+                    onChange={(e) =>
+                      updateSocialLink(index, "name", e.target.value)
+                    }
+                    placeholder="Name"
+                    className="w-32 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                  />
+                  <select
+                    value={link.icon}
+                    onChange={(e) =>
+                      updateSocialLink(index, "icon", e.target.value)
+                    }
+                    className="w-28 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                  >
+                    <option value="Github">GitHub</option>
+                    <option value="Linkedin">LinkedIn</option>
+                    <option value="Twitter">Twitter / X</option>
+                    <option value="Instagram">Instagram</option>
+                    <option value="Youtube">YouTube</option>
+                    <option value="Facebook">Facebook</option>
+                    <option value="Fiverr">Fiverr</option>
+                    <option value="Upwork">Upwork</option>
+                    <option value="Dribbble">Dribbble</option>
+                    <option value="Behance">Behance</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Discord">Discord</option>
+                    <option value="Twitch">Twitch</option>
+                    <option value="TikTok">TikTok</option>
+                    <option value="Snapchat">Snapchat</option>
+                    <option value="Pinterest">Pinterest</option>
+                    <option value="Reddit">Reddit</option>
+                    <option value="Telegram">Telegram</option>
+                    <option value="WhatsApp">WhatsApp</option>
+                    <option value="Mail">Email</option>
+                    <option value="Globe">Website</option>
+                    <option value="Link">Other</option>
+                  </select>
+                  <input
+                    type="text"
+                    value={link.href}
+                    onChange={(e) =>
+                      updateSocialLink(index, "href", e.target.value)
+                    }
+                    placeholder="URL"
+                    className="flex-1 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeSocialLink(index)}
+                    className="p-2 rounded-lg hover:bg-red-500/20 transition-colors"
+                  >
+                    <X className="w-4 h-4 text-red-400" />
+                  </button>
+                </div>
               </div>
             ))}
           </div>

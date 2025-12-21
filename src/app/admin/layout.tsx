@@ -20,7 +20,10 @@ export default function AdminLayout({
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
       <Sidebar />
-      <main className="flex-1 p-8 overflow-auto">{children}</main>
+      {/* Main content - add top padding on mobile for the fixed header */}
+      <main className="flex-1 p-4 pt-20 md:pt-4 md:p-8 overflow-auto w-full">
+        {children}
+      </main>
     </div>
   );
 }

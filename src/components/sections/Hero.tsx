@@ -3,7 +3,28 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowDown, Github, Linkedin, Twitter, Code, Sparkles } from "lucide-react";
+import {
+  ArrowDown,
+  Github,
+  Linkedin,
+  Twitter,
+  Code,
+  Sparkles,
+  Instagram,
+  Youtube,
+  Facebook,
+  Mail,
+  Globe,
+  Link,
+  MessageCircle,
+  Twitch,
+  Music,
+  Camera,
+  PenTool,
+  BookOpen,
+  Send,
+  MessageSquare,
+} from "lucide-react";
 import { CursorFollower } from "@/components/shared/CursorFollower";
 import { Button } from "@/components/ui/button";
 
@@ -39,6 +60,25 @@ const iconMap: { [key: string]: React.ComponentType<{ className?: string }> } = 
   Github,
   Linkedin,
   Twitter,
+  Instagram,
+  Youtube,
+  Facebook,
+  Fiverr: PenTool,      // Using PenTool as Fiverr icon
+  Upwork: Globe,        // Using Globe as Upwork icon
+  Dribbble: PenTool,    // Using PenTool as Dribbble icon
+  Behance: PenTool,     // Using PenTool as Behance icon
+  Medium: BookOpen,     // Using BookOpen as Medium icon
+  Discord: MessageCircle,
+  Twitch,
+  TikTok: Music,
+  Snapchat: Camera,
+  Pinterest: Camera,
+  Reddit: MessageSquare,
+  Telegram: Send,
+  WhatsApp: MessageCircle,
+  Mail,
+  Globe,
+  Link,
 };
 
 interface HeroData {

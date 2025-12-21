@@ -98,9 +98,9 @@ export default function MessagesAdmin() {
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white mb-2">Messages</h1>
-        <p className="text-gray-400">
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold text-white mb-1 sm:mb-2">Messages</h1>
+        <p className="text-gray-400 text-sm sm:text-base">
           {unreadCount > 0
             ? `You have ${unreadCount} unread message${unreadCount > 1 ? "s" : ""}`
             : "All caught up!"}

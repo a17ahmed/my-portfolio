@@ -169,14 +169,14 @@ export default function SkillsAdmin() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2">Skills</h1>
-          <p className="text-gray-400">Manage your skill domains</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-1 sm:mb-2">Skills</h1>
+          <p className="text-gray-400 text-sm sm:text-base">Manage your skill domains</p>
         </div>
         <Button
           onClick={() => openModal()}
-          className="bg-cyan-500 hover:bg-cyan-600"
+          className="bg-cyan-500 hover:bg-cyan-600 w-full sm:w-auto"
         >
           <Plus className="w-5 h-5 mr-2" />
           Add Skill
@@ -311,7 +311,7 @@ export default function SkillsAdmin() {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-300 mb-2">
                       Icon
