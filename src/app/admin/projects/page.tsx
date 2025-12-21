@@ -113,6 +113,17 @@ export default function ProjectsAdmin() {
     setModalOpen(true);
   }
 
+  // Helper to ensure URL has protocol
+  function ensureProtocol(url: string): string {
+    if (!url) return url;
+    url = url.trim();
+    // Add https:// if no protocol (user can manually use http:// if needed)
+    if (!url.startsWith("http://") && !url.startsWith("https://")) {
+      return `https://${url}`;
+    }
+    return url;
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
@@ -122,7 +133,12 @@ export default function ProjectsAdmin() {
       .map((t) => t.trim())
       .filter((t) => t);
 
-    const payload = { ...formData, tags };
+    const payload = {
+      ...formData,
+      tags,
+      liveUrl: ensureProtocol(formData.liveUrl || ""),
+      githubUrl: ensureProtocol(formData.githubUrl || ""),
+    };
 
     try {
       const url = editingProject
@@ -512,12 +528,13 @@ export default function ProjectsAdmin() {
                       Live URL
                     </label>
                     <input
-                      type="url"
+                      type="text"
                       value={formData.liveUrl}
                       onChange={(e) =>
                         setFormData({ ...formData, liveUrl: e.target.value })
                       }
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                      placeholder="mobilemate.io or https://mobilemate.io"
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500"
                     />
                   </div>
                   <div>
@@ -525,12 +542,13 @@ export default function ProjectsAdmin() {
                       GitHub URL
                     </label>
                     <input
-                      type="url"
+                      type="text"
                       value={formData.githubUrl}
                       onChange={(e) =>
                         setFormData({ ...formData, githubUrl: e.target.value })
                       }
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                      placeholder="github.com/username/repo"
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500"
                     />
                   </div>
                 </div>

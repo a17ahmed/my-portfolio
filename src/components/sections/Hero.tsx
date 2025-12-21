@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowDown, Github, Linkedin, Twitter, Code, Sparkles } from "lucide-react";
+import { CursorFollower } from "@/components/shared/CursorFollower";
 import { Button } from "@/components/ui/button";
 
 // STATIC DATA - kept as fallback (commented out when DB is working)
@@ -184,6 +185,9 @@ export function Hero() {
         <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
       </div>
 
+      {/* Cute AI Assistant Character */}
+      {mounted && <CursorFollower onChatOpen={() => console.log("Open AI Chat")} />}
+
       {/* Content */}
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-4xl">
@@ -236,9 +240,15 @@ export function Hero() {
             transition={{ duration: 0.6, delay: 1.8 }}
             className="text-lg text-gray-300 mb-10 max-w-2xl leading-relaxed"
           >
-            I craft <span className="text-cyan-400 font-semibold">beautiful</span>,{" "}
-            <span className="text-purple-400 font-semibold">performant</span> web experiences
-            that users love. Specialized in React, Next.js, and modern web technologies.
+            {heroData.description.split(/(\{cyan\}.*?\{\/cyan\}|\{purple\}.*?\{\/purple\})/).map((part, i) => {
+              if (part.startsWith("{cyan}")) {
+                return <span key={i} className="text-cyan-400 font-semibold">{part.replace("{cyan}", "").replace("{/cyan}", "")}</span>;
+              }
+              if (part.startsWith("{purple}")) {
+                return <span key={i} className="text-purple-400 font-semibold">{part.replace("{purple}", "").replace("{/purple}", "")}</span>;
+              }
+              return part;
+            })}
           </motion.p>
 
           {/* CTA Buttons */}

@@ -490,69 +490,48 @@ function ProjectModal({
 
               {/* Main Content Area */}
               <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
-                {/* Large Preview Section */}
-                <div className="relative">
-                  <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-3 flex items-center gap-2">
-                    <Monitor className="w-4 h-4" />
-                    Live Preview
-                  </h3>
+                {/* Large Preview Section - Only show if iframe is allowed and working */}
+                {project.allowIframe && !iframeError && project.liveUrl && (
+                  <div className="relative">
+                    <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-3 flex items-center gap-2">
+                      <Monitor className="w-4 h-4" />
+                      Live Preview
+                    </h3>
 
-                  <div className="relative aspect-video rounded-2xl overflow-hidden bg-black/50 border border-white/10">
-                    {/* Show iframe if allowed and not errored */}
-                    {project.allowIframe && !iframeError && project.liveUrl ? (
-                      <>
-                        {/* Loading state */}
-                        {!iframeLoaded && (
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="flex flex-col items-center gap-3">
-                              <motion.div
-                                animate={{ rotate: 360 }}
-                                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                                className={`w-8 h-8 border-2 border-transparent border-t-${project.accentColor}-500 rounded-full`}
-                              />
-                              <p className="text-sm text-muted-foreground">Loading preview...</p>
-                            </div>
+                    <div className="relative aspect-video rounded-2xl overflow-hidden bg-black/50 border border-white/10">
+                      {/* Loading state */}
+                      {!iframeLoaded && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="flex flex-col items-center gap-3">
+                            <motion.div
+                              animate={{ rotate: 360 }}
+                              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                              className={`w-8 h-8 border-2 border-transparent border-t-${project.accentColor}-500 rounded-full`}
+                            />
+                            <p className="text-sm text-muted-foreground">Loading preview...</p>
                           </div>
-                        )}
-                        <iframe
-                          src={project.liveUrl}
-                          className={`w-full h-full ${iframeLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity`}
-                          onLoad={() => setIframeLoaded(true)}
-                          onError={() => setIframeError(true)}
-                          sandbox="allow-scripts allow-same-origin"
-                        />
-                      </>
-                    ) : (
-                      /* Show screenshot with click to open link */
+                        </div>
+                      )}
+                      <iframe
+                        src={project.liveUrl}
+                        className={`w-full h-full ${iframeLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity`}
+                        onLoad={() => setIframeLoaded(true)}
+                        onError={() => setIframeError(true)}
+                        sandbox="allow-scripts allow-same-origin"
+                      />
+                      {/* Always show visit button overlay for iframe */}
                       <a
                         href={project.liveUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block w-full h-full relative group cursor-pointer"
+                        className="absolute bottom-4 right-4 z-10 flex items-center gap-2 px-4 py-2 rounded-full bg-black/70 backdrop-blur-sm text-white text-sm font-medium hover:bg-black/90 transition-colors"
                       >
-                        {/* Placeholder gradient background */}
-                        <div className={`absolute inset-0 bg-gradient-to-br ${project.gradientFrom}/20 ${project.gradientTo}/20 flex items-center justify-center`}>
-                          <div className="text-center">
-                            <Monitor className="w-16 h-16 mx-auto mb-4 text-white/30" />
-                            <p className="text-white/50">Click to view live site</p>
-                          </div>
-                        </div>
-
-                        {/* Hover overlay */}
-                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                          <motion.div
-                            initial={{ scale: 0.8 }}
-                            whileHover={{ scale: 1 }}
-                            className={`flex items-center gap-3 px-6 py-3 rounded-full bg-gradient-to-r ${project.gradientFrom} ${project.gradientTo} text-white font-semibold`}
-                          >
-                            <Maximize2 className="w-5 h-5" />
-                            Open Live Site
-                          </motion.div>
-                        </div>
+                        <ExternalLink className="w-4 h-4" />
+                        Visit Site
                       </a>
-                    )}
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Description */}
                 <div>
