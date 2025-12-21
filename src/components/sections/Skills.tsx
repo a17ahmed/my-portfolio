@@ -193,7 +193,7 @@ function SkillModal({
             <div className={`absolute -inset-2 ${domain.bgGlow} rounded-3xl blur-3xl opacity-50 pointer-events-none`} />
 
             {/* Modal Content */}
-            <div className="relative glass-card rounded-3xl border border-white/10 overflow-hidden">
+            <div className="relative rounded-3xl border border-white/10 overflow-hidden backdrop-blur-md bg-white/5">
               {/* Background gradient */}
               <div className={`absolute inset-0 bg-gradient-to-br ${domain.color} opacity-10 pointer-events-none`} />
 
@@ -322,7 +322,7 @@ function SkillModal({
   );
 }
 
-// 3D Tilt Card Component with Click to Open Modal
+// 3D Tilt Card Component with performance optimizations
 function TiltCard({
   domain,
   index,
@@ -338,13 +338,14 @@ function TiltCard({
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [15, -15]), {
-    stiffness: 300,
-    damping: 30,
+  // Reduced stiffness and damping for smoother performance
+  const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [10, -10]), {
+    stiffness: 150,
+    damping: 20,
   });
-  const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-15, 15]), {
-    stiffness: 300,
-    damping: 30,
+  const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-10, 10]), {
+    stiffness: 150,
+    damping: 20,
   });
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -379,38 +380,35 @@ function TiltCard({
         rotateX,
         rotateY,
         transformStyle: "preserve-3d",
+        willChange: "transform",
       }}
       className="relative cursor-pointer group"
     >
-      {/* Glow effect */}
-      <motion.div
-        animate={{ opacity: isHovered ? 0.8 : 0 }}
-        transition={{ duration: 0.3 }}
-        className={`absolute -inset-1 ${domain.bgGlow} rounded-2xl blur-xl`}
-      />
+      {/* Glow effect - only show on hover for performance */}
+      {isHovered && (
+        <div className={`absolute -inset-1 ${domain.bgGlow} rounded-2xl blur-xl opacity-80`} />
+      )}
 
       {/* Card */}
-      <motion.div
-        animate={{ scale: isHovered ? 1.02 : 1 }}
-        transition={{ type: "spring", stiffness: 400, damping: 25 }}
-        className="relative glass-card rounded-2xl p-6 h-full border border-white/5 overflow-hidden"
+      <div
+        className="relative rounded-2xl p-6 h-full border border-white/10 overflow-hidden backdrop-blur-md bg-white/5 transition-transform duration-200"
+        style={{ transform: isHovered ? "scale(1.02)" : "scale(1)" }}
       >
         {/* Animated background gradient */}
-        <motion.div
-          animate={{ opacity: isHovered ? 0.1 : 0 }}
-          className={`absolute inset-0 bg-gradient-to-br ${domain.color}`}
+        <div
+          className={`absolute inset-0 bg-gradient-to-br ${domain.color} transition-opacity duration-300`}
+          style={{ opacity: isHovered ? 0.1 : 0 }}
         />
 
         {/* Content */}
         <div style={{ transform: "translateZ(50px)" }} className="relative">
           {/* Icon */}
-          <motion.div
-            animate={isHovered ? { scale: 1.1, rotate: 5 } : { scale: 1, rotate: 0 }}
-            transition={{ type: "spring", stiffness: 300 }}
-            className={`w-14 h-14 rounded-xl bg-gradient-to-br ${domain.color} flex items-center justify-center mb-4 shadow-lg`}
+          <div
+            className={`w-14 h-14 rounded-xl bg-gradient-to-br ${domain.color} flex items-center justify-center mb-4 shadow-lg transition-transform duration-200`}
+            style={{ transform: isHovered ? "scale(1.1) rotate(5deg)" : "scale(1) rotate(0deg)" }}
           >
             <Icon className="w-7 h-7 text-white" />
-          </motion.div>
+          </div>
 
           {/* Title */}
           <h3 className="text-xl font-bold mb-2 group-hover:text-white transition-colors">
@@ -440,38 +438,26 @@ function TiltCard({
           </div>
         </div>
 
-        {/* Hover hint - Simple elegant text */}
-        <AnimatePresence>
-          {isHovered && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="absolute inset-0 flex items-end justify-center rounded-2xl bg-gradient-to-t from-black/60 via-black/20 to-transparent"
-            >
-              <motion.p
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 5 }}
-                transition={{ duration: 0.3 }}
-                className="mb-5 text-white text-sm font-medium tracking-wide"
-              >
-                Tap to discover more
-              </motion.p>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {/* Hover hint */}
+        {isHovered && (
+          <div className="absolute inset-0 flex items-end justify-center rounded-2xl bg-gradient-to-t from-black/60 via-black/20 to-transparent">
+            <p className="mb-5 text-white text-sm font-medium tracking-wide">
+              Tap to discover more
+            </p>
+          </div>
+        )}
 
         {/* Corner accent */}
         <div
-          className={`absolute -bottom-10 -right-10 w-32 h-32 bg-gradient-to-br ${domain.color} opacity-10 rounded-full blur-2xl group-hover:opacity-30 transition-opacity`}
+          className={`absolute -bottom-10 -right-10 w-32 h-32 bg-gradient-to-br ${domain.color} rounded-full blur-2xl transition-opacity duration-300`}
+          style={{ opacity: isHovered ? 0.3 : 0.1 }}
         />
-      </motion.div>
+      </div>
     </motion.div>
   );
 }
 
-// Floating 3D Orbit Animation
+// Floating 3D Orbit Animation - optimized with CSS animations
 function FloatingOrbit({ isMobile }: { isMobile: boolean }) {
   const [mounted, setMounted] = useState(false);
 
@@ -482,123 +468,88 @@ function FloatingOrbit({ isMobile }: { isMobile: boolean }) {
   // Don't render on mobile or until mounted
   if (!mounted || isMobile) return null;
 
+  // Reduced to 4 items for better performance
   const orbitItems = [
-    { icon: "⚛️", delay: 0, duration: 20 },
-    { icon: "🚀", delay: 2, duration: 25 },
-    { icon: "💡", delay: 4, duration: 22 },
-    { icon: "⚡", delay: 6, duration: 28 },
-    { icon: "🎯", delay: 8, duration: 24 },
-    { icon: "✨", delay: 10, duration: 26 },
+    { icon: "⚛️", size: 300, duration: "20s" },
+    { icon: "🚀", size: 400, duration: "25s" },
+    { icon: "💡", size: 500, duration: "30s" },
+    { icon: "⚡", size: 600, duration: "35s" },
   ];
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {/* Central glow */}
+      {/* Central glow - reduced blur */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px]">
-        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-purple-500/10 to-pink-500/10 rounded-full blur-[100px]" />
+        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-purple-500/10 to-pink-500/10 rounded-full blur-3xl" />
       </div>
 
-      {/* Orbiting elements */}
+      {/* Orbiting elements using CSS animations */}
       {orbitItems.map((item, index) => (
-        <motion.div
+        <div
           key={index}
-          className="absolute top-1/2 left-1/2"
-          animate={{
-            rotate: 360,
-          }}
-          transition={{
-            duration: item.duration,
-            repeat: Infinity,
-            ease: "linear",
-            delay: item.delay,
-          }}
+          className="absolute top-1/2 left-1/2 animate-spin"
           style={{
-            width: 300 + index * 80,
-            height: 300 + index * 80,
-            marginLeft: -(150 + index * 40),
-            marginTop: -(150 + index * 40),
+            width: item.size,
+            height: item.size,
+            marginLeft: -item.size / 2,
+            marginTop: -item.size / 2,
+            animationDuration: item.duration,
+            animationTimingFunction: "linear",
           }}
         >
-          <motion.span
+          <span
             className="absolute text-2xl"
             style={{
               top: 0,
               left: "50%",
               transform: "translateX(-50%)",
             }}
-            animate={{
-              rotate: -360,
-            }}
-            transition={{
-              duration: item.duration,
-              repeat: Infinity,
-              ease: "linear",
-              delay: item.delay,
-            }}
           >
             {item.icon}
-          </motion.span>
-        </motion.div>
+          </span>
+        </div>
       ))}
     </div>
   );
 }
 
-// 3D Sphere Background
+// 3D Sphere Background - static SVG for performance
 function SphereBackground({ isMobile }: { isMobile: boolean }) {
-  // Don't render on mobile
   if (isMobile) return null;
 
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-30">
+    <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
       <svg
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px]"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] animate-spin"
+        style={{ animationDuration: "60s" }}
         viewBox="0 0 200 200"
       >
-        {/* Latitude lines */}
-        {[...Array(8)].map((_, i) => (
-          <motion.ellipse
+        {/* Static latitude lines */}
+        {[...Array(6)].map((_, i) => (
+          <ellipse
             key={`lat-${i}`}
             cx="100"
             cy="100"
             rx={80}
-            ry={80 * Math.cos((i * Math.PI) / 8)}
+            ry={80 * Math.cos((i * Math.PI) / 6)}
             fill="none"
             stroke="url(#sphereGradient)"
             strokeWidth="0.3"
             opacity={0.5}
-            animate={{ rotateX: 360 }}
-            transition={{
-              duration: 30,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-            style={{
-              transformOrigin: "center",
-            }}
           />
         ))}
-        {/* Longitude lines */}
-        {[...Array(12)].map((_, i) => (
-          <motion.ellipse
+        {/* Static longitude lines */}
+        {[...Array(8)].map((_, i) => (
+          <ellipse
             key={`long-${i}`}
             cx="100"
             cy="100"
-            rx={80 * Math.cos((i * Math.PI) / 12)}
+            rx={80 * Math.cos((i * Math.PI) / 8)}
             ry={80}
             fill="none"
             stroke="url(#sphereGradient)"
             strokeWidth="0.3"
             opacity={0.3}
-            animate={{ rotateY: 360 }}
-            transition={{
-              duration: 40,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-            style={{
-              transformOrigin: "center",
-            }}
           />
         ))}
         <defs>
@@ -713,7 +664,7 @@ export function Skills() {
             whileInView={{ scale: 1 }}
             viewport={{ once: true }}
             transition={{ type: "spring", duration: 0.8 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-6"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-md bg-white/5 border border-white/10 mb-6"
           >
             <Sparkles className="w-4 h-4 text-cyan-400" />
             <span className="text-sm font-medium">What I Bring to the Table</span>

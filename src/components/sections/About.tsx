@@ -190,9 +190,9 @@ export function About() {
         <div id="about" className="absolute top-[10%]" />
         {/* Sticky content - stays fixed while scrolling through container */}
         <div className="sticky top-0 h-screen overflow-hidden">
-          {/* Background Elements */}
-          <div className="absolute top-1/4 -left-32 w-96 h-96 bg-cyan-500/5 rounded-full blur-[120px]" />
-          <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-purple-500/5 rounded-full blur-[120px]" />
+          {/* Background Elements - reduced blur for performance */}
+          <div className="absolute top-1/4 -left-32 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl" />
 
           <div className="container mx-auto px-4 h-full flex flex-col justify-center py-20">
             {/* Section Header */}
@@ -222,7 +222,7 @@ export function About() {
                   <div className="absolute -inset-4 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 rounded-3xl blur-2xl" />
 
                   {/* Image container - both images stacked */}
-                  <div className="relative aspect-4/3 rounded-2xl overflow-hidden glass-card">
+                  <div className="relative aspect-4/3 rounded-2xl overflow-hidden backdrop-blur-md bg-white/5 border border-white/10">
                     {/* First Image */}
                     <motion.div
                       style={{
@@ -280,7 +280,7 @@ export function About() {
                         style={{ opacity: label1Opacity }}
                         className="absolute bottom-0 left-0"
                       >
-                        <span className="px-4 py-2 rounded-full glass text-sm font-medium text-cyan-400">
+                        <span className="px-4 py-2 rounded-full backdrop-blur-md bg-white/5 border border-white/10 text-sm font-medium text-cyan-400">
                           {aboutContent[0].label}
                         </span>
                       </motion.div>
@@ -288,7 +288,7 @@ export function About() {
                         style={{ opacity: label2Opacity }}
                         className="absolute bottom-0 left-0"
                       >
-                        <span className="px-4 py-2 rounded-full glass text-sm font-medium text-purple-400">
+                        <span className="px-4 py-2 rounded-full backdrop-blur-md bg-white/5 border border-white/10 text-sm font-medium text-purple-400">
                           {aboutContent[1].label}
                         </span>
                       </motion.div>
@@ -296,31 +296,23 @@ export function About() {
                         style={{ opacity: label3Opacity }}
                         className="absolute bottom-0 left-0"
                       >
-                        <span className="px-4 py-2 rounded-full glass text-sm font-medium text-emerald-400">
+                        <span className="px-4 py-2 rounded-full backdrop-blur-md bg-white/5 border border-white/10 text-sm font-medium text-emerald-400">
                           {aboutContent[2].label}
                         </span>
                       </motion.div>
                     </div>
                   </div>
 
-                  {/* Floating experience badge */}
-                  <motion.div
-                    animate={{ y: [0, -10, 0] }}
-                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                    className="absolute -bottom-6 -right-6 glass-card rounded-2xl p-4 shadow-xl"
-                  >
+                  {/* Floating experience badge - CSS animation for performance */}
+                  <div className="absolute -bottom-6 -right-6 rounded-2xl p-4 shadow-xl backdrop-blur-md bg-white/5 border border-white/10 animate-float">
                     <p className="text-3xl font-bold gradient-text">5+</p>
                     <p className="text-sm text-muted-foreground">Years of Experience</p>
-                  </motion.div>
+                  </div>
 
-                  {/* Floating tech badge */}
-                  <motion.div
-                    animate={{ y: [0, 10, 0] }}
-                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                    className="absolute -top-4 -left-4 glass-card rounded-xl px-4 py-2 shadow-xl"
-                  >
+                  {/* Floating tech badge - CSS animation for performance */}
+                  <div className="absolute -top-4 -left-4 rounded-xl px-4 py-2 shadow-xl backdrop-blur-md bg-white/5 border border-white/10 animate-float" style={{ animationDelay: "1s" }}>
                     <p className="text-sm font-medium text-cyan-400">Full Stack Dev</p>
-                  </motion.div>
+                  </div>
 
                   {/* Scroll progress indicator */}
                   <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 flex gap-2">
@@ -380,7 +372,7 @@ export function About() {
                         <motion.span
                           key={skill}
                           whileHover={{ scale: 1.1, y: -2 }}
-                          className={`px-3 py-1.5 rounded-full glass text-sm font-medium cursor-default ${aboutContent[0].skillHoverColor} transition-colors`}
+                          className={`px-3 py-1.5 rounded-full backdrop-blur-md bg-white/5 border border-white/10 text-sm font-medium cursor-default ${aboutContent[0].skillHoverColor} transition-colors`}
                         >
                           {skill}
                         </motion.span>
@@ -400,7 +392,7 @@ export function About() {
                     </Button>
                     <Button
                       variant="outline"
-                      className="glass glass-hover rounded-full"
+                      className="backdrop-blur-md bg-white/5 border-white/10 hover:bg-white/10 rounded-full"
                       asChild
                     >
                       <a href="#contact">Let's Talk</a>
@@ -431,7 +423,7 @@ export function About() {
                         <motion.span
                           key={skill}
                           whileHover={{ scale: 1.1, y: -2 }}
-                          className={`px-3 py-1.5 rounded-full glass text-sm font-medium cursor-default ${aboutContent[1].skillHoverColor} transition-colors`}
+                          className={`px-3 py-1.5 rounded-full backdrop-blur-md bg-white/5 border border-white/10 text-sm font-medium cursor-default ${aboutContent[1].skillHoverColor} transition-colors`}
                         >
                           {skill}
                         </motion.span>
@@ -450,7 +442,7 @@ export function About() {
                     </Button>
                     <Button
                       variant="outline"
-                      className="glass glass-hover rounded-full"
+                      className="backdrop-blur-md bg-white/5 border-white/10 hover:bg-white/10 rounded-full"
                       asChild
                     >
                       <a href="#contact">Discuss Architecture</a>
@@ -481,7 +473,7 @@ export function About() {
                         <motion.span
                           key={skill}
                           whileHover={{ scale: 1.1, y: -2 }}
-                          className={`px-3 py-1.5 rounded-full glass text-sm font-medium cursor-default ${aboutContent[2].skillHoverColor} transition-colors`}
+                          className={`px-3 py-1.5 rounded-full backdrop-blur-md bg-white/5 border border-white/10 text-sm font-medium cursor-default ${aboutContent[2].skillHoverColor} transition-colors`}
                         >
                           {skill}
                         </motion.span>
@@ -500,7 +492,7 @@ export function About() {
                     </Button>
                     <Button
                       variant="outline"
-                      className="glass glass-hover rounded-full"
+                      className="backdrop-blur-md bg-white/5 border-white/10 hover:bg-white/10 rounded-full"
                       asChild
                     >
                       <a href="#contact">Get In Touch</a>
@@ -537,7 +529,7 @@ export function About() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 whileHover={{ scale: 1.05, y: -5 }}
-                className="glass-card rounded-2xl p-6 text-center group cursor-default"
+                className="rounded-2xl p-6 text-center group cursor-default backdrop-blur-md bg-white/5 border border-white/10"
               >
                 <stat.icon className="h-8 w-8 mx-auto mb-3 text-cyan-400 group-hover:scale-110 transition-transform" />
                 <p className="text-3xl md:text-4xl font-bold gradient-text mb-1">

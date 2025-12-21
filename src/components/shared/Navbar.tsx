@@ -53,7 +53,7 @@ export function Navbar() {
       transition={{ duration: 0.5 }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
-          ? "glass py-3"
+          ? "py-3 rounded-md bg-clip-padding backdrop-filter backdrop-blur-md bg-white/5 border-b border-white/10"
           : "bg-transparent py-5"
       }`}
     >
@@ -92,7 +92,7 @@ export function Navbar() {
               <Button
                 variant="outline"
                 size="sm"
-                className="hidden sm:flex items-center gap-2 glass glass-hover"
+                className="hidden sm:flex items-center gap-2 backdrop-blur-md bg-white/5 border-white/10 hover:bg-white/10"
                 asChild
               >
                 <a href={resumeUrl} target="_blank" rel="noopener noreferrer">
@@ -106,7 +106,7 @@ export function Navbar() {
             <Button
               variant="ghost"
               size="icon"
-              className="lg:hidden glass"
+              className="lg:hidden backdrop-blur-md bg-white/5 border-white/10"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
               {isMobileMenuOpen ? (
@@ -128,7 +128,7 @@ export function Navbar() {
               transition={{ duration: 0.3 }}
               className="lg:hidden mt-4 overflow-hidden"
             >
-              <div className="glass-card rounded-xl p-4 space-y-2">
+              <div className="rounded-xl p-4 space-y-2 backdrop-blur-md bg-white/5 border border-white/10">
                 {navLinks.map((link, index) => (
                   <motion.div
                     key={link.name}
@@ -155,7 +155,7 @@ export function Navbar() {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="w-full flex items-center justify-center gap-2 glass glass-hover"
+                      className="w-full flex items-center justify-center gap-2 backdrop-blur-md bg-white/5 border-white/10 hover:bg-white/10"
                       asChild
                     >
                       <a href={resumeUrl} target="_blank" rel="noopener noreferrer">
